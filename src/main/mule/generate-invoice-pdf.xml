@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="f8d2bfa4-f03d-4eb8-9055-9f9922a79363" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="generate-invoice-pdfFlow" doc:id="d36017fe-7585-47a7-ba97-45b22df4a6e5" >
+		<http:listener doc:name="Listener" doc:id="66e51cac-7c08-483d-8529-6ec8ffc4e7f2" config-ref="HTTP_Listener_config" path="/generate-invoice"/>
+		<logger level="INFO" doc:name="Process Start" doc:id="37f80d55-deca-4ba4-a31d-ca109ffad9eb" message="Process Start" />
+		<ee:transform doc:name="JSON to HTML" doc:id="4ebcba53-391d-41a8-8e0a-b09dc887d2e5">
+			<ee:message>
+				<ee:set-payload resource="json-to-html.dwl" />
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="HTML to String" doc:id="165036a3-e1f4-4eb9-a894-6c53742b0322" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+write(payload, "application/xml")]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="Generate PDF from HTML String" doc:id="d5c8c995-cbce-4ceb-9275-1b0b8c3b996e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+import java!com::invoice::pdf::HTMLtoPDF
+output application/java
+---
+HTMLtoPDF::toPDF(payload)
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<file:write doc:name="Write PDF into a Folder" doc:id="eb114051-4c5e-4215-a041-eb3bc4cde02f" path="C:\invoice.pdf"/> <!-- Update the target path as required-->
+		<ee:transform doc:name="Final Response" doc:id="472288c8-6546-42aa-9c2c-d7fcc22247f2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: "Invoice generated and saved in the given path"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="b431d56b-f0f7-4af9-9550-09b9195d0bd0" message="Process complete"/>
+	</flow>
+</mule>

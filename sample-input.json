@@ -1,0 +1,42 @@
+{
+	"SellerDetails": 
+	{
+		"SellerName" : "Pristine Enterprises",
+		"SellerAddress": "45-97, BTM Layout, Bangalore",
+		"SellertLocation": "Karnataka, India",
+		"SellerPincode": "600076",
+		"SellerGSTN": "29ABCXYZ123"
+	},
+	"BuyerDetails":
+	{
+		"BuyerName" : "Sakthi Traders",
+		"BuyerAddress": "36A, Whitefield, Bangalore",
+		"BuyerLocation": "Karnataka, India",
+		"BuyerPincode": "600111",
+		"BuyerGSTN": "29PQRLMN987"
+	},
+	"ItemDetails": [
+	{
+		"SL. No": 1,
+		"ItemName": "RO Water Can 10L",
+		"Quantity": 100,
+		"UnitPrice": 10,
+		"Amount": 1000
+	},
+	{
+		"SL. No": 2,
+		"ItemName": "Carbonated Water bottle Case 500ML",
+		"Quantity": 100,
+		"UnitPrice": 250,
+		"Amount": 25000
+	},
+	{
+		"SL. No": 3,
+		"ItemName": "RO Water Bottle case 1L",
+		"Quantity": 100,
+		"UnitPrice": 120,
+		"Amount": 12000
+	}],
+	"GST %": 12,
+	"InvoiceNo": "29202411003"
+}
